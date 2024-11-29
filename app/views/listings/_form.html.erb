@@ -1,0 +1,35 @@
+<div class="card full-form-card">
+  <div class="card-body">
+    <%= form_with(model: listing) do |form| %>
+      <% if listing.errors.any? %>
+        <div style="color: red">
+          <h2><%= pluralize(listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
+
+          <ul>
+            <% listing.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="row">
+        <div class=" mb-3 col-12 col-md-6">
+          <h5 class="card-title">Add a New Listing</h5>
+          <p class="text-muted">This listing will be tracked and its data will be refreshed daily.</p>
+        </div>
+
+        <div class="mb-3 col-12 col-md-6">
+          <label for="listing_url" class="form-label">Listing URL</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="listing_url">
+          </div>
+        </div>
+
+        <div class="w-100 mb-0">
+          <button type="submit" class="btn btn-primary float-end">Add Listing</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

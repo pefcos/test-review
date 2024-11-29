@@ -1,0 +1,12 @@
+{
+  "name": "test_review",
+  "version": "1.0.0",
+  "description": "App made for the Rankbreeze selection process",
+  "main": "index.js",
+  "author": "Pedro <pfronchetti@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "5.3.3"
+  }
+}

@@ -1,0 +1,5 @@
+:concurrency: 2
+:schedule:
+  scraper_job:
+    cron: "0 1 * * *"
+    class: ScraperJob
