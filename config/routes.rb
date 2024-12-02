@@ -1,5 +1,9 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
-  resources :listings, only: %i[index show create destroy]
+  mount Sidekiq::Web => '/sidekiq'
+
+  resources :user_listings, only: %i[index show create destroy]
 
   devise_for :users, controllers: {
     registrations: 'users/registrations'
@@ -15,5 +19,5 @@ Rails.application.routes.draw do
   get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root to: 'listings#index'
+  root to: 'user_listings#index'
 end

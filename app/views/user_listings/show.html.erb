@@ -1,0 +1,22 @@
+<%= javascript_pack_tag 'charts' %>
+<script>
+  window.chartLabels = <%= @chart_labels.to_json.html_safe %>;
+  window.chartData = <%= @chart_data.to_json.html_safe %>;
+</script>
+
+<p style="color: green"><%= notice %></p>
+
+<%= render @user_listing %>
+
+<div>
+  <%= link_to "Back to listings", user_listings_path %>
+
+  <% @user_listing.listing.reviews.each do |review| %>
+    <div class="card">
+      <div class="card-body">
+        <strong><%= review.author %></strong>
+        <p><%= review.text %></p>
+      </div>
+    </div>
+  <% end %>
+</div>

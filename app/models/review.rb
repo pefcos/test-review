@@ -1,9 +1,10 @@
 class Review < ApplicationRecord
-  self.primary_key = :rating_id
-
   belongs_to :listing
 
-  validates :author, presence: true
-  validates :rating, presence: true
-  validates_inclusion_of :rating, in: 1..5
+  def count_word_frequencies(string)
+    words = string.split(' ')
+    frequency = Hash.new(0)
+    words.each { |word| frequency[word.downcase] += 1 }
+    frequency
+  end
 end

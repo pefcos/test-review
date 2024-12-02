@@ -1,0 +1,18 @@
+<% content_for :title, "Listings" %>
+
+<h1 class="text-center">Your Listings</h1>
+
+<br>
+
+<%= render "form", user_listing: @user_listing %>
+
+<br>
+
+<div id="listings">
+  <% @user_listings.each do |user_listing| %>
+    <%= render user_listing %>
+    <p>
+      <%= link_to "Show this listing", user_listing %>
+    </p>
+  <% end %>
+</div>

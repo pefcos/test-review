@@ -1,0 +1,11 @@
+<div id="<%= dom_id user_listing %>">
+  <% if user_listing.pending? %>
+    <p class="text-warning">
+      This is Pending!
+    </p>
+  <% end %>
+  <p>
+    <strong>Url:</strong>
+    <%= user_listing.url %>
+  </p>
+</div>

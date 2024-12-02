@@ -2,7 +2,6 @@ class CreateReviews < ActiveRecord::Migration[7.2]
   def change
     create_table :reviews do |t|
       t.string :author, null: false
-      t.integer :rating, null: false
       t.string :text, null: false
       t.date :date, null: false
       t.string :airbnb_review_id, null: false

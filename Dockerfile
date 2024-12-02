@@ -36,6 +36,25 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
+# Firefox and geckodriver setup for scraping
+RUN sudo install -d -m 0755 /etc/apt/keyrings
+RUN wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+RUN echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+RUN echo '
+    Package: *
+    Pin: origin packages.mozilla.org
+    Pin-Priority: 1000
+    
+    Package: firefox*
+    Pin: release o=Ubuntu
+    Pin-Priority: -1' | sudo tee /etc/apt/preferences.d/mozilla
+RUN sudo apt update && sudo apt remove firefox
+RUN sudo apt install firefox
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz \
+    && tar -xvzf geckodriver-v0.33.0-linux64.tar.gz \
+    && mv geckodriver /usr/local/bin/ \
+    && rm geckodriver-v0.33.0-linux64.tar.gz
+
 # Copy application code
 COPY . .
 

@@ -240,6 +240,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
+    rexml (3.3.9)
     rspec-core (3.13.2)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
@@ -286,6 +287,7 @@ GEM
       rubocop-performance
       rubocop-rails
     ruby-progressbar (1.13.0)
+    rubyzip (2.3.2)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
     sassc (2.4.0)
@@ -297,6 +299,12 @@ GEM
       sprockets-rails
       tilt
     securerandom (0.3.2)
+    selenium-webdriver (4.27.0)
+      base64 (~> 0.2)
+      logger (~> 1.4)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
     sidekiq (7.3.6)
       connection_pool (>= 2.3.0)
       logger
@@ -345,6 +353,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
+    websocket (1.2.11)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -382,6 +391,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails-omakase
   sassc-rails
+  selenium-webdriver (~> 4.27)
   sidekiq
   sidekiq-scheduler
   sprockets-rails
