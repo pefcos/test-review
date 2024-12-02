@@ -1,6 +1,6 @@
 <div class="card full-form-card">
   <div class="card-body">
-    <%= form_with(model: listing) do |form| %>
+    <%= form_with(model: listing) do |f| %>
       <% if listing.errors.any? %>
         <div style="color: red">
           <h2><%= pluralize(listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
@@ -20,9 +20,9 @@
         </div>
 
         <div class="mb-3 col-12 col-md-6">
-          <label for="listing_url" class="form-label">Listing URL</label>
+          <%= f.label "Listing URL", { class: "form-label"} %>
           <div class="input-group">
-            <input type="text" class="form-control" id="listing_url">
+            <%= f.text_field :url, { class: "form-control" } %>
           </div>
         </div>
 
