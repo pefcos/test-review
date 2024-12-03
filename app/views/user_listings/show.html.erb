@@ -1,9 +1,3 @@
-<%= javascript_pack_tag 'charts' %>
-<script>
-  window.chartLabels = <%= @chart_labels.to_json.html_safe %>;
-  window.chartData = <%= @chart_data.to_json.html_safe %>;
-</script>
-
 <p style="color: green"><%= notice %></p>
 
 <%= render @user_listing %>

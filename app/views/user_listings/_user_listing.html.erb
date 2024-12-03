@@ -1,11 +1,24 @@
-<div id="<%= dom_id user_listing %>">
-  <% if user_listing.pending? %>
-    <p class="text-warning">
-      This is Pending!
-    </p>
+<div class="card">
+  <div class="card-header">
+    <h3 class="m-0 d-inline"><%= user_listing.created_at.strftime("%Y/%m/%d") %></h3>
+    <%= button_to "Remove Listing", user_listing, method: :delete, class: "float-end btn btn-danger d-inline", data: { confirm: "Do you really wish to delete this listing?" } %>
+  </div>
+  <div class="card-body">
+    <div id="<%= dom_id user_listing %>">
+      <p>
+        <strong>Url:</strong>
+        <%= user_listing.url %>
+      </p>
+      <% if user_listing.pending? %>
+        <div class="alert alert-warning"> 
+          <p class="m-0">This listing's information has not yet been fully gathered. It should be ready shortly.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% unless user_listing.pending? %>
+    <div class="card-footer">
+      <%= link_to "Listing Stats", user_listing, class: "float-end btn btn-success" %>
+    </div>
   <% end %>
-  <p>
-    <strong>Url:</strong>
-    <%= user_listing.url %>
-  </p>
 </div>

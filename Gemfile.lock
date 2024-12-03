@@ -391,7 +391,7 @@ DEPENDENCIES
   rspec-rails
   rubocop-rails-omakase
   sassc-rails
-  selenium-webdriver (~> 4.27)
+  selenium-webdriver
   sidekiq
   sidekiq-scheduler
   sprockets-rails

@@ -33,11 +33,11 @@ class UserListingsController < ApplicationController
 
   # DELETE /listings/1 or /listings/1.json
   def destroy
-    @user_listing.listing.destroy! if @user_listing.listing.user_listings.count == 1
+    @user_listing.listing.destroy! if @user_listing.listing.present? && @user_listing.listing.user_listings.count == 1
     @user_listing.destroy!
 
     respond_to do |format|
-      format.html { redirect_to listings_path, status: :see_other, notice: 'Listing was successfully destroyed.' }
+      format.html { redirect_to user_listings_path, status: :see_other, notice: 'Listing was successfully destroyed.' }
     end
   end
 
