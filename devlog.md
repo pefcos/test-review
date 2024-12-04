@@ -40,6 +40,8 @@ I've used RSpec to test my models and their validations. This allows for automat
 
 Okay, I think this might be the most difficult part of the project to get right, there are a lot of moving parts and messing up any of them could lead to massive slow-downs and/or data inconsistencies.
 
+The scraping job was scheduled in sidekiq to run at 1:00 AM every day, so that it updates review data and gathers new data points.
+
 ### Technologies
 
 To handle the scraping, I've used Selenium along with the Firefox Browser and geckodriver to connect to Airbnb. These were chosen because they were the easiest to set up.
@@ -62,4 +64,16 @@ This was achieved through the UserListing model, which received a "pending" attr
 
 ### The Chart
 
-Implemented using Chart.js, which renders the data in a nice graph in the front-end
+Implemented using Chart.js, which renders the data in a nice graph in the front-end.
+
+The chart displays the number of reviews for each gathered month. It is important to note that the application will list the date of the gathering of this information, not the date of the review posting in Airbnb.
+
+### Word Cloud
+
+Implemented using the `magic_cloud` gem. The image is generated whenever the page is finished being scraped. Once generated, it is attached to the Listing model.
+
+The first time I implemented the word cloud, I thought the results were a little boring, since the word "the" occupied the 1st spot in most of my tests. Some other words that don't mean much to the user (like "a", "an", "and") were also being added to the cloud and had pretty big relevance. I decided to take some of these words out of the word cloud, which made the results more interesting.
+
+### Stimulus.js
+
+At first I had no idea what to implement with stimulus, but I knew I wanted to use the reviews I had gathered. So I thought of a pretty simple but interesting idea: I would get 8 random reviews from the page and display them at the bottom of the listing page, and via JS, you could swap between reviews, like a carousel component.
