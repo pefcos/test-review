@@ -24167,3 +24167,1813 @@ Processing by Rails::PwaController#manifest as JSON
 Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
 
 
+Started GET "/user_listings" for 172.18.0.1 at 2024-12-04 04:59:34 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#index as HTML
+  [1m[36mUser Load (1.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/index.html.erb within layouts/application
+  Rendered user_listings/_form.html.erb (Duration: 0.7ms | GC: 0.0ms)
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."user_id" = ?[0m  [["user_id", 2]]
+  ↳ app/views/user_listings/index.html.erb:12
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/views/user_listings/_user_listing.html.erb:11
+  Rendered user_listings/_user_listing.html.erb (Duration: 7.0ms | GC: 0.1ms)
+  Rendered user_listings/index.html.erb within layouts/application (Duration: 9.9ms | GC: 0.3ms)
+  Rendered layout layouts/application.html.erb (Duration: 2236.1ms | GC: 65.3ms)
+Completed 200 OK in 2246ms (Views: 2236.8ms | ActiveRecord: 1.7ms (3 queries, 0 cached) | GC: 65.9ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 04:59:36 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 04:59:41 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.7ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 1.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.6ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 13ms (ActiveRecord: 0.9ms (4 queries, 0 cached) | GC: 0.0ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <p style="color: green"><%= notice %></p>
+
+<%= link_to " Back to listings", user_listings_path, class: "btn btn-secondary mb-2" %>  
+
+<h2 class="text-center"><%= @user_listing.listing.name %></h2>
+<h4 class="text-center text-muted">Listing added at <%= @user_listing.created_at.strftime("%b/%d, %Y") %></h4>
+
+<br>
+
+<div>
+  <div class="card">
+    <div class="card-header">
+      <h3>Reviews Gathered by Month</h3>
+    </div>
+    <div class="card-body">
+      <div>
+        <canvas id="reviewChart"></canvas>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('reviewChart');
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: <%= @chart_labels.to_json.html_safe %>,
+            datasets: [{
+              label: "Reviews Gathered",
+              data: <%= @chart_values.to_json.html_safe %>,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <% if @user_listing.listing.word_cloud_image.attached? %>
+    <div class="card mt-2 mb-2">
+      <div class="card-header">
+        <h3>Word Cloud</h3>
+      </div>
+      <div class="card-body p-0">
+        <%= image_tag @user_listing.listing.word_cloud_image, class: "mx-auto d-block img-fluid" %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <% @user_listing.listing.reviews.each do |review| %>
+      <div class="card shadow p-4" data-review-carousel-target="card" hidden>
+        <h4 class="card-title"><%= review.author %></h4>
+        <p class="card-text" data-review-carousel-target="text"><%= review.text %></p>
+        <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+      </div>
+
+      <div class="mt-4">
+        <button class="btn btn-outline-primary me-2" data-action="click->review-carousel#showPrevious">Previous</button>
+        <button class="btn btn-outline-primary" data-action="click->review-carousel#showNext">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-controller="review-carousel">
+    <% @user_listing.listing.reviews.each do |review| %>
+      <div class="card mt-2 mb-2">
+        <div class="card-body">
+          <h4><%= review.author %></h4>
+          <p><%= review.text %></p>
+          <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+):
+
+Causes:
+ActiveSupport::SyntaxErrorProxy (/app/app/views/user_listings/show.html.erb:86: syntax error, unexpected end-of-input
+          end
+             ^
+)
+1:    <p style="color: green"><%= notice %></p>
+2:    
+3:    <%= link_to " Back to listings", user_listings_path, class: "btn btn-secondary mb-2" %>  
+4:    
+5:    <h2 class="text-center"><%= @user_listing.listing.name %></h2>
+6:    <h4 class="text-center text-muted">Listing added at <%= @user_listing.created_at.strftime("%b/%d, %Y") %></h4>
+7:    
+8:    <br>
+9:    
+10:    <div>
+11:      <div class="card">
+12:        <div class="card-header">
+13:          <h3>Reviews Gathered by Month</h3>
+14:        </div>
+15:        <div class="card-body">
+16:          <div>
+17:            <canvas id="reviewChart"></canvas>
+18:          </div>
+19:          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+20:          <script>
+21:            const ctx = document.getElementById('reviewChart');
+22:    
+23:            new Chart(ctx, {
+24:              type: 'bar',
+25:              data: {
+26:                labels: <%= @chart_labels.to_json.html_safe %>,
+27:                datasets: [{
+28:                  label: "Reviews Gathered",
+29:                  data: <%= @chart_values.to_json.html_safe %>,
+30:                  borderWidth: 1
+31:                }]
+32:              },
+33:              options: {
+34:                scales: {
+35:                  y: {
+36:                    beginAtZero: true
+37:                  }
+38:                }
+39:              }
+40:            });
+41:          </script>
+42:        </div>
+43:      </div>
+44:    
+45:      <% if @user_listing.listing.word_cloud_image.attached? %>
+46:        <div class="card mt-2 mb-2">
+47:          <div class="card-header">
+48:            <h3>Word Cloud</h3>
+49:          </div>
+50:          <div class="card-body p-0">
+51:            <%= image_tag @user_listing.listing.word_cloud_image, class: "mx-auto d-block img-fluid" %>
+52:          </div>
+53:        </div>
+54:      <% end %>
+55:    
+56:      <div class="row justify-content-center">
+57:        <div class="col-md-6 text-center">
+58:          <% @user_listing.listing.reviews.each do |review| %>
+59:          <div class="card shadow p-4" data-review-carousel-target="card" hidden>
+60:            <h4 class="card-title"><%= review.author %></h4>
+61:            <p class="card-text" data-review-carousel-target="text"><%= review.text %></p>
+62:            <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+63:          </div>
+64:    
+65:          <div class="mt-4">
+66:            <button class="btn btn-outline-primary me-2" data-action="click->review-carousel#showPrevious">Previous</button>
+67:            <button class="btn btn-outline-primary" data-action="click->review-carousel#showNext">Next</button>
+68:          </div>
+69:        </div>
+70:      </div>
+71:    
+72:      <div data-controller="review-carousel">
+73:        <% @user_listing.listing.reviews.each do |review| %>
+74:          <div class="card mt-2 mb-2">
+75:            <div class="card-body">
+76:              <h4><%= review.author %></h4>
+77:              <p><%= review.text %></p>
+78:              <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+79:            </div>
+80:          </div>
+81:        <% end %>
+82:      </div>
+83:    </div>
+  
+app/views/user_listings/show.html.erb:86: syntax error, unexpected end-of-input
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:00:32 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.5ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 0.9ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 1.0ms | GC: 0.2ms)
+Completed 500 Internal Server Error in 8ms (ActiveRecord: 0.6ms (4 queries, 0 cached) | GC: 0.7ms)
+
+
+  
+ActionView::SyntaxErrorInTemplate (Encountered a syntax error while rendering template: check <p style="color: green"><%= notice %></p>
+
+<%= link_to " Back to listings", user_listings_path, class: "btn btn-secondary mb-2" %>  
+
+<h2 class="text-center"><%= @user_listing.listing.name %></h2>
+<h4 class="text-center text-muted">Listing added at <%= @user_listing.created_at.strftime("%b/%d, %Y") %></h4>
+
+<br>
+
+<div>
+  <div class="card">
+    <div class="card-header">
+      <h3>Reviews Gathered by Month</h3>
+    </div>
+    <div class="card-body">
+      <div>
+        <canvas id="reviewChart"></canvas>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('reviewChart');
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: <%= @chart_labels.to_json.html_safe %>,
+            datasets: [{
+              label: "Reviews Gathered",
+              data: <%= @chart_values.to_json.html_safe %>,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <% if @user_listing.listing.word_cloud_image.attached? %>
+    <div class="card mt-2 mb-2">
+      <div class="card-header">
+        <h3>Word Cloud</h3>
+      </div>
+      <div class="card-body p-0">
+        <%= image_tag @user_listing.listing.word_cloud_image, class: "mx-auto d-block img-fluid" %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+      <% @user_listing.listing.reviews.each do |review| %>
+      <div class="card shadow p-4" data-review-carousel-target="card" hidden>
+        <h4 class="card-title"><%= review.author %></h4>
+        <p class="card-text" data-review-carousel-target="text"><%= review.text %></p>
+        <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+      </div>
+
+      <div class="mt-4">
+        <button class="btn btn-outline-primary me-2" data-action="click->review-carousel#showPrevious">Previous</button>
+        <button class="btn btn-outline-primary" data-action="click->review-carousel#showNext">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-controller="review-carousel">
+    <% @user_listing.listing.reviews.each do |review| %>
+      <div class="card mt-2 mb-2">
+        <div class="card-body">
+          <h4><%= review.author %></h4>
+          <p><%= review.text %></p>
+          <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+):
+
+Causes:
+ActiveSupport::SyntaxErrorProxy (/app/app/views/user_listings/show.html.erb:86: syntax error, unexpected end-of-input
+          end
+             ^
+)
+1:    <p style="color: green"><%= notice %></p>
+2:    
+3:    <%= link_to " Back to listings", user_listings_path, class: "btn btn-secondary mb-2" %>  
+4:    
+5:    <h2 class="text-center"><%= @user_listing.listing.name %></h2>
+6:    <h4 class="text-center text-muted">Listing added at <%= @user_listing.created_at.strftime("%b/%d, %Y") %></h4>
+7:    
+8:    <br>
+9:    
+10:    <div>
+11:      <div class="card">
+12:        <div class="card-header">
+13:          <h3>Reviews Gathered by Month</h3>
+14:        </div>
+15:        <div class="card-body">
+16:          <div>
+17:            <canvas id="reviewChart"></canvas>
+18:          </div>
+19:          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+20:          <script>
+21:            const ctx = document.getElementById('reviewChart');
+22:    
+23:            new Chart(ctx, {
+24:              type: 'bar',
+25:              data: {
+26:                labels: <%= @chart_labels.to_json.html_safe %>,
+27:                datasets: [{
+28:                  label: "Reviews Gathered",
+29:                  data: <%= @chart_values.to_json.html_safe %>,
+30:                  borderWidth: 1
+31:                }]
+32:              },
+33:              options: {
+34:                scales: {
+35:                  y: {
+36:                    beginAtZero: true
+37:                  }
+38:                }
+39:              }
+40:            });
+41:          </script>
+42:        </div>
+43:      </div>
+44:    
+45:      <% if @user_listing.listing.word_cloud_image.attached? %>
+46:        <div class="card mt-2 mb-2">
+47:          <div class="card-header">
+48:            <h3>Word Cloud</h3>
+49:          </div>
+50:          <div class="card-body p-0">
+51:            <%= image_tag @user_listing.listing.word_cloud_image, class: "mx-auto d-block img-fluid" %>
+52:          </div>
+53:        </div>
+54:      <% end %>
+55:    
+56:      <div class="row justify-content-center">
+57:        <div class="col-md-6 text-center">
+58:          <% @user_listing.listing.reviews.each do |review| %>
+59:          <div class="card shadow p-4" data-review-carousel-target="card" hidden>
+60:            <h4 class="card-title"><%= review.author %></h4>
+61:            <p class="card-text" data-review-carousel-target="text"><%= review.text %></p>
+62:            <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+63:          </div>
+64:    
+65:          <div class="mt-4">
+66:            <button class="btn btn-outline-primary me-2" data-action="click->review-carousel#showPrevious">Previous</button>
+67:            <button class="btn btn-outline-primary" data-action="click->review-carousel#showNext">Next</button>
+68:          </div>
+69:        </div>
+70:      </div>
+71:    
+72:      <div data-controller="review-carousel">
+73:        <% @user_listing.listing.reviews.each do |review| %>
+74:          <div class="card mt-2 mb-2">
+75:            <div class="card-body">
+76:              <h4><%= review.author %></h4>
+77:              <p><%= review.text %></p>
+78:              <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+79:            </div>
+80:          </div>
+81:        <% end %>
+82:      </div>
+83:    </div>
+  
+app/views/user_listings/show.html.erb:86: syntax error, unexpected end-of-input
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:01:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 13.3ms | GC: 1.4ms)
+  Rendered layout layouts/application.html.erb (Duration: 16.2ms | GC: 1.6ms)
+Completed 200 OK in 46ms (Views: 16.7ms | ActiveRecord: 2.6ms (6 queries, 0 cached) | GC: 5.3ms)
+
+
+Started GET "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:01:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::Blobs::RedirectController#show as PNG
+  Parameters: {"signed_id"=>"eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31", "filename"=>"listing_1_cloud"}
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+[36m  Disk Storage (0.4ms) [0m[34mGenerated URL for file at key: nbmawi8yp0b9syo4gczm28b0gqbu (http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png)[0m
+Redirected to http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png
+Completed 302 Found in 3ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:01:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 200 OK in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:01:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.1ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:01:51 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.4ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 8.6ms | GC: 0.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 10.6ms | GC: 0.8ms)
+Completed 200 OK in 32ms (Views: 11.0ms | ActiveRecord: 1.9ms (6 queries, 0 cached) | GC: 2.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:01:51 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:01:51 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:02:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 6.8ms | GC: 0.0ms)
+Completed 200 OK in 12ms (Views: 7.0ms | ActiveRecord: 0.4ms (6 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:02:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:02:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:02:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:03:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 5.2ms | GC: 0.0ms)
+Completed 200 OK in 11ms (Views: 5.4ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:03:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:03:18 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:03:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.7ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.2ms | GC: 0.6ms)
+Completed 200 OK in 10ms (Views: 4.4ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 1.0ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:03:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:03:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:03:37 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 24.1ms | GC: 11.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 88.4ms | GC: 15.5ms)
+Completed 200 OK in 137ms (Views: 89.8ms | ActiveRecord: 2.3ms (6 queries, 0 cached) | GC: 15.5ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjA2OjE4LjU2NFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--2b17d828c707296988afa742ccd10c89c705cb24/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:03:37 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:03:37 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.9ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:06:52 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 22.1ms | GC: 10.8ms)
+  Rendered layout layouts/application.html.erb (Duration: 69.5ms | GC: 14.5ms)
+Completed 200 OK in 117ms (Views: 71.0ms | ActiveRecord: 2.2ms (6 queries, 0 cached) | GC: 14.5ms)
+
+
+Started GET "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:06:52 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::Blobs::RedirectController#show as PNG
+  Parameters: {"signed_id"=>"eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31", "filename"=>"listing_1_cloud"}
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+[36m  Disk Storage (0.5ms) [0m[34mGenerated URL for file at key: nbmawi8yp0b9syo4gczm28b0gqbu (http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjExOjUyLjIyNFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--422d783cdd9306d354c60834541a0ee8d77980be/listing_1_cloud.png)[0m
+Redirected to http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjExOjUyLjIyNFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--422d783cdd9306d354c60834541a0ee8d77980be/listing_1_cloud.png
+Completed 302 Found in 3ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.2ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjExOjUyLjIyNFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--422d783cdd9306d354c60834541a0ee8d77980be/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:06:52 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 200 OK in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:06:52 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:07:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 8.0ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.8ms | GC: 0.2ms)
+Completed 200 OK in 31ms (Views: 10.0ms | ActiveRecord: 1.9ms (6 queries, 0 cached) | GC: 1.1ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjExOjUyLjIyNFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--422d783cdd9306d354c60834541a0ee8d77980be/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:07:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:07:19 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:09:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 20.2ms | GC: 11.7ms)
+  Rendered layout layouts/application.html.erb (Duration: 46.7ms | GC: 13.1ms)
+Completed 200 OK in 97ms (Views: 48.7ms | ActiveRecord: 2.3ms (6 queries, 0 cached) | GC: 41.4ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjExOjUyLjIyNFoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--422d783cdd9306d354c60834541a0ee8d77980be/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:09:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:09:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.1ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:13:05 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.7ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 21.4ms | GC: 10.3ms)
+  Rendered layout layouts/application.html.erb (Duration: 2417.7ms | GC: 94.5ms)
+Completed 200 OK in 2466ms (Views: 2419.6ms | ActiveRecord: 2.9ms (6 queries, 0 cached) | GC: 94.5ms)
+
+
+Started GET "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:13:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::Blobs::RedirectController#show as PNG
+  Parameters: {"signed_id"=>"eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31", "filename"=>"listing_1_cloud"}
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+[36m  Disk Storage (0.5ms) [0m[34mGenerated URL for file at key: nbmawi8yp0b9syo4gczm28b0gqbu (http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png)[0m
+Redirected to http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png
+Completed 302 Found in 3ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.1ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:13:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 200 OK in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:13:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.3ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.1ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:14:05 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.4ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 15.6ms | GC: 1.1ms)
+Completed 200 OK in 28ms (Views: 15.9ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 5.9ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:14:06 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:14:06 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.1ms)
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.1ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:14:07 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.6ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 6.0ms | GC: 0.3ms)
+Completed 200 OK in 12ms (Views: 6.2ms | ActiveRecord: 0.4ms (6 queries, 0 cached) | GC: 0.5ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:14:07 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:14:07 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:14:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 8.0ms | GC: 1.7ms)
+Completed 200 OK in 15ms (Views: 8.3ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 2.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:14:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:14:08 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:15:25 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 11.3ms | GC: 0.3ms)
+  Rendered layout layouts/application.html.erb (Duration: 54.0ms | GC: 6.4ms)
+Completed 200 OK in 111ms (Views: 55.3ms | ActiveRecord: 2.1ms (6 queries, 0 cached) | GC: 17.8ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjE4OjA4LjYzN1oiLCJwdXIiOiJibG9iX2tleSJ9fQ==--6a7756958e2f1d177af95d980ce09bea1152ed03/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:15:25 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:15:25 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:20:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.4ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.7ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 11.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 65.8ms | GC: 14.3ms)
+Completed 200 OK in 114ms (Views: 67.8ms | ActiveRecord: 2.8ms (6 queries, 0 cached) | GC: 14.3ms)
+
+
+Started GET "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:20:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::Blobs::RedirectController#show as PNG
+  Parameters: {"signed_id"=>"eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31", "filename"=>"listing_1_cloud"}
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+[36m  Disk Storage (0.4ms) [0m[34mGenerated URL for file at key: nbmawi8yp0b9syo4gczm28b0gqbu (http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png)[0m
+Redirected to http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png
+Completed 302 Found in 4ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.2ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:20:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 200 OK in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:20:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 2ms (Views: 1.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:20:55 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.6ms | GC: 0.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 5.1ms | GC: 0.2ms)
+Completed 200 OK in 16ms (Views: 5.3ms | ActiveRecord: 0.6ms (6 queries, 0 cached) | GC: 4.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:20:55 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:20:55 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:21:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.3ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.7ms | GC: 0.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 6.6ms | GC: 0.2ms)
+Completed 200 OK in 14ms (Views: 6.8ms | ActiveRecord: 0.7ms (6 queries, 0 cached) | GC: 0.6ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:21:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:21:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:22:02 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 9.7ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 21.3ms | GC: 1.3ms)
+Completed 200 OK in 49ms (Views: 21.7ms | ActiveRecord: 2.5ms (6 queries, 0 cached) | GC: 5.7ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjI1OjU0LjQyOVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--41d76551e46f0126f9dee81a9bd2d1d3d7c6e11a/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:22:02 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:22:02 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.1ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:26:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.6ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 12.5ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 63.3ms | GC: 0.6ms)
+Completed 200 OK in 126ms (Views: 65.4ms | ActiveRecord: 3.0ms (6 queries, 0 cached) | GC: 11.9ms)
+
+
+Started GET "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:26:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::Blobs::RedirectController#show as PNG
+  Parameters: {"signed_id"=>"eyJfcmFpbHMiOnsiZGF0YSI6NywicHVyIjoiYmxvYl9pZCJ9fQ==--7b58303fd44d375c2d63b64773522d6968902d31", "filename"=>"listing_1_cloud"}
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+[36m  Disk Storage (0.4ms) [0m[34mGenerated URL for file at key: nbmawi8yp0b9syo4gczm28b0gqbu (http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png)[0m
+Redirected to http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png
+Completed 302 Found in 3ms (ActiveRecord: 0.1ms (1 query, 0 cached) | GC: 0.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:26:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 200 OK in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:26:15 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.3ms | GC: 0.0ms)
+Completed 200 OK in 2ms (Views: 1.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:27:04 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.5ms | GC: 0.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 62.5ms | GC: 1.2ms)
+Completed 200 OK in 69ms (Views: 62.7ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 1.7ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:27:04 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:27:04 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:27:33 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 3.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 17.6ms | GC: 4.5ms)
+Completed 200 OK in 24ms (Views: 17.8ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 4.5ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:27:33 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:27:33 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:27:39 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.2ms | GC: 0.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.5ms | GC: 0.1ms)
+Completed 200 OK in 10ms (Views: 4.7ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 0.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:27:39 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:27:39 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:27:39 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.8ms | GC: 0.1ms)
+Completed 200 OK in 10ms (Views: 5.0ms | ActiveRecord: 0.4ms (6 queries, 0 cached) | GC: 0.5ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:27:39 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:27:40 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:27:58 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 9.4ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 9.5ms | GC: 0.0ms)
+Completed 500 Internal Server Error in 33ms (ActiveRecord: 2.2ms (6 queries, 0 cached) | GC: 0.8ms)
+
+
+  
+ActionView::Template::Error (undefined method `each' for nil:NilClass):
+
+Causes:
+NoMethodError (undefined method `each' for nil:NilClass)
+    56:   <div data-controller="reviews">
+    57:     <div class="row justify-content-center">
+    58:       <div class="col-md-6 text-center">
+    59:         <% @sample_reviews.each do |review| %>
+    60:           <div class="card shadow p-4" data-reviews-target="card" hidden>
+    61:             <h4 class="card-title"><%= review.author %></h4>
+    62:             <p class="card-text" data-reviews-target="text"><%= review.text %></p>
+  
+app/views/user_listings/show.html.erb:59
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 8.0ms | GC: 0.6ms)
+  Rendered layout layouts/application.html.erb (Duration: 14.7ms | GC: 1.2ms)
+Completed 200 OK in 38ms (Views: 15.0ms | ActiveRecord: 1.8ms (6 queries, 0 cached) | GC: 6.0ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 2ms (Views: 1.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 1.9ms | GC: 0.1ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.4ms | GC: 0.2ms)
+Completed 200 OK in 10ms (Views: 4.5ms | ActiveRecord: 0.4ms (6 queries, 0 cached) | GC: 0.4ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (4.4ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.3ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.3ms | GC: 0.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.8ms | GC: 0.4ms)
+Completed 200 OK in 15ms (Views: 4.7ms | ActiveRecord: 4.9ms (6 queries, 0 cached) | GC: 4.7ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:20 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.0ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 1.8ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.3ms | GC: 0.1ms)
+Completed 200 OK in 10ms (Views: 4.5ms | ActiveRecord: 0.4ms (6 queries, 0 cached) | GC: 0.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 4.8ms | GC: 0.1ms)
+Completed 200 OK in 11ms (Views: 5.0ms | ActiveRecord: 0.5ms (6 queries, 0 cached) | GC: 0.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:21 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 0ms (Views: 0.3ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:22 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (1.4ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 2.3ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 5.0ms | GC: 0.2ms)
+Completed 200 OK in 12ms (Views: 5.1ms | ActiveRecord: 1.8ms (6 queries, 0 cached) | GC: 2.1ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:22 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:22 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.1ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:28:42 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.4ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 8.0ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 21.2ms | GC: 5.8ms)
+Completed 200 OK in 41ms (Views: 21.5ms | ActiveRecord: 2.0ms (6 queries, 0 cached) | GC: 6.3ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:28:42 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:28:42 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:29:10 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.1ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (9.0ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 14.4ms | GC: 5.2ms)
+  Rendered layout layouts/application.html.erb (Duration: 23.5ms | GC: 6.7ms)
+Completed 200 OK in 84ms (Views: 24.3ms | ActiveRecord: 10.7ms (6 queries, 0 cached) | GC: 47.8ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:29:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:29:12 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:29:43 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.1ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 8.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 23.2ms | GC: 5.5ms)
+Completed 200 OK in 46ms (Views: 23.6ms | ActiveRecord: 2.0ms (6 queries, 0 cached) | GC: 6.2ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:29:43 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 1ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:29:43 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.3ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.1ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:29:50 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 6.6ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 18.0ms | GC: 5.6ms)
+Completed 200 OK in 37ms (Views: 18.3ms | ActiveRecord: 1.8ms (6 queries, 0 cached) | GC: 6.2ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:29:50 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:29:50 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.8ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:29:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.0ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.0ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 6.9ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 13.2ms | GC: 0.0ms)
+Completed 200 OK in 32ms (Views: 13.6ms | ActiveRecord: 1.6ms (6 queries, 0 cached) | GC: 0.6ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:29:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:29:54 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 0.6ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/user_listings/16" for 172.18.0.1 at 2024-12-04 05:29:57 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by UserListingsController#show as HTML
+  Parameters: {"id"=>"16"}
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = ? ORDER BY "users"."id" ASC LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mUserListing Load (0.0ms)[0m  [1m[34mSELECT "user_listings".* FROM "user_listings" WHERE "user_listings"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:49:in `set_user_listing'
+  [1m[36mListing Load (0.0ms)[0m  [1m[34mSELECT "listings".* FROM "listings" WHERE "listings"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `show'
+  [1m[36mReview Load (0.2ms)[0m  [1m[34mSELECT "reviews".* FROM "reviews" WHERE "reviews"."listing_id" = ?[0m  [["listing_id", 1]]
+  ↳ app/controllers/user_listings_controller.rb:13:in `group_by'
+  Rendering layout layouts/application.html.erb
+  Rendering user_listings/show.html.erb within layouts/application
+  [1m[36mActiveStorage::Attachment Load (0.1ms)[0m  [1m[34mSELECT "active_storage_attachments".* FROM "active_storage_attachments" WHERE "active_storage_attachments"."record_id" = ? AND "active_storage_attachments"."record_type" = ? AND "active_storage_attachments"."name" = ? LIMIT ?[0m  [["record_id", 1], ["record_type", "Listing"], ["name", "word_cloud_image"], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:45
+  [1m[36mActiveStorage::Blob Load (0.1ms)[0m  [1m[34mSELECT "active_storage_blobs".* FROM "active_storage_blobs" WHERE "active_storage_blobs"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  ↳ app/views/user_listings/show.html.erb:51
+  Rendered user_listings/show.html.erb within layouts/application (Duration: 7.0ms | GC: 0.4ms)
+  Rendered layout layouts/application.html.erb (Duration: 13.3ms | GC: 0.6ms)
+Completed 200 OK in 32ms (Views: 13.5ms | ActiveRecord: 1.5ms (6 queries, 0 cached) | GC: 2.2ms)
+
+
+Started GET "/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuYm1hd2k4eXAwYjlzeW80Z2N6bTI4YjBncWJ1IiwiZGlzcG9zaXRpb24iOiJpbmxpbmU7IGZpbGVuYW1lPVwibGlzdGluZ18xX2Nsb3VkLnBuZ1wiOyBmaWxlbmFtZSo9VVRGLTgnJ2xpc3RpbmdfMV9jbG91ZC5wbmciLCJjb250ZW50X3R5cGUiOiJpbWFnZS9wbmciLCJzZXJ2aWNlX25hbWUiOiJsb2NhbCJ9LCJleHAiOiIyMDI0LTEyLTA0VDA1OjMxOjE1LjQ2NVoiLCJwdXIiOiJibG9iX2tleSJ9fQ==--4e4bef86427238c55fbf5868d0fdf9a8de9b2d0b/listing_1_cloud.png" for 172.18.0.1 at 2024-12-04 05:29:58 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by ActiveStorage::DiskController#show as PNG
+  Parameters: {"encoded_key"=>"[FILTERED]", "filename"=>"listing_1_cloud"}
+Completed 304 Not Modified in 0ms (ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+
+Started GET "/manifest.json" for 172.18.0.1 at 2024-12-04 05:29:58 +0000
+Cannot render console from 172.18.0.1! Allowed networks: 127.0.0.0/127.255.255.255, ::1
+Processing by Rails::PwaController#manifest as JSON
+  Rendering pwa/manifest.json.erb
+  Rendered pwa/manifest.json.erb (Duration: 0.2ms | GC: 0.0ms)
+Completed 200 OK in 1ms (Views: 1.0ms | ActiveRecord: 0.0ms (0 queries, 0 cached) | GC: 0.0ms)
+
+

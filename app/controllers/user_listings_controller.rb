@@ -13,6 +13,7 @@ class UserListingsController < ApplicationController
     grouped_data = @user_listing.listing.reviews.group_by { |r| r.created_at.strftime('%B %Y') }
     @chart_labels = grouped_data.keys
     @chart_values = grouped_data.values.map(&:count)
+    @review_sample = @user_listing.listing.reviews.sample 8
   end
 
   # POST /listings or /listings.json

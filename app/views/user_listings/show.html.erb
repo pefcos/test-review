@@ -53,13 +53,22 @@
     </div>
   <% end %>
 
-  <% @user_listing.listing.reviews.each do |review| %>
-    <div class="card mt-2 mb-2">
-      <div class="card-body">
-        <h4><%= review.author %></h4>
-        <p><%= review.text %></p>
-        <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+  <div data-controller="reviews">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <div class="mb-2 mt-4">
+          <button class="btn btn-light me-2" data-action="reviews#showPrevious">Previous</button>
+          <button class="btn btn-light" data-action="reviews#showNext">Next</button>
+        </div>
+
+        <% @review_sample.each do |review| %>
+          <div class="card shadow p-4" data-reviews-target="card" hidden>
+            <h4 class="card-title"><%= review.author %></h4>
+            <p class="card-text" data-reviews-target="text"><%= review.text %></p>
+            <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
+          </div>
+        <% end %>
       </div>
     </div>
-  <% end %>
+  </div>
 </div>
