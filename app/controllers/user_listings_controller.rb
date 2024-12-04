@@ -10,7 +10,7 @@ class UserListingsController < ApplicationController
 
   # GET /listings/1 or /listings/1.json
   def show
-    grouped_data = @user_listing.listing.reviews.group_by { |r| r.created_at.strftime('%B %Y') }
+    grouped_data = @user_listing.listing.reviews.order(:created_at).group_by { |r| r.created_at.strftime('%B %Y') }
     @chart_labels = grouped_data.keys
     @chart_values = grouped_data.values.map(&:count)
     @review_sample = @user_listing.listing.reviews.sample 8
