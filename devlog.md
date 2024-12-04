@@ -57,3 +57,9 @@ One big hurdle I faced, is the fact that the reviews are loaded dynamically when
 Once a user enters an URL to be tracked, the scraping process my take a long time. Imagine a listing with over 1,000 reviews, that would certainly take a long time to process. I needed a way to let the user know the listing is being processed or is enqueued to be processed.
 
 This was achieved through the UserListing model, which received a "pending" attribute, which is set to true whenever the UserListing is created, and upon job completion, is set to false by the ScraperJob. 
+
+## Features
+
+### The Chart
+
+Implemented using Chart.js, which renders the data in a nice graph in the front-end

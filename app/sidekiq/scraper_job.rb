@@ -22,10 +22,13 @@ class ScraperJob
     end
     sleep 4
 
+    # driver.execute_script("document.querySelector(\"button[data-testid='pdp-show-all-reviews-button']\").scrollIntoView(true)")
+    sleep 2
     button = driver.find_element(css: "button[data-testid='pdp-show-all-reviews-button']")
     # Get number of reviews, accounting for possible "," in the number. Used for review scrolling.
-    scrolls = button.text.match(/\d{1,3}(,\d{3})*/)[0].gsub(',', '').to_i / 10
-    button.click
+    scrolls = button.attribute("innerHTML").match(/\d{1,3}(,\d{3})*/)[0].gsub(',', '').to_i / 10
+    sleep 2
+    driver.execute_script('arguments[0].click();', button)
     sleep 2
 
     # scrollable_panel = driver.find_element(:css, "div[role='dialog'] div[tabindex='0']").find_element(xpath: './..')
@@ -40,7 +43,7 @@ class ScraperJob
     reviews = driver.find_elements(css: "div[data-testid='pdp-reviews-modal-scrollable-panel'] div[data-review-id]")
     reviews.each do |review|
       review_id = review.attribute('data-review-id')
-      continue if existing_review_ids.include? review_id
+      next if existing_review_ids.include?(review_id)
 
       author = review.find_element(css: 'div section div div h2').text
       # rating = review.find_element(css: 'div div div span').text.gsub(/\d/).first.to_i
@@ -48,6 +51,12 @@ class ScraperJob
 
       listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
     end
+
+    # Generate and save word cloud.
+    image_blob = MagicCloud::Cloud.new(listing.review_word_cloud, rotate: :square, font_family: "Arial").draw(800, 500)
+    image_blob.format = 'png'
+    listing.word_cloud_image.attach(io: StringIO.new(image_blob.to_blob), filename: "listing_#{listing.id}_cloud.png",
+                                    content_type: 'image/png')
 
     driver.quit
 

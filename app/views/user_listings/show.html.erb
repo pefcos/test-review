@@ -1,15 +1,64 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @user_listing %>
+<%= link_to " Back to listings", user_listings_path, class: "btn btn-secondary mb-2" %>  
+
+<h2 class="text-center"><%= @user_listing.listing.name %></h2>
+<h4 class="text-center text-muted">Listing added at <%= @user_listing.created_at.strftime("%b/%d, %Y") %></h4>
+
+<br>
 
 <div>
-  <%= link_to "Back to listings", user_listings_path %>
+  <div class="card">
+    <div class="card-header">
+      <h3>Reviews Gathered by Month</h3>
+    </div>
+    <div class="card-body">
+      <div>
+        <canvas id="reviewChart"></canvas>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('reviewChart');
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: <%= @chart_labels.to_json.html_safe %>,
+            datasets: [{
+              label: "Reviews Gathered",
+              data: <%= @chart_values.to_json.html_safe %>,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    </div>
+  </div>
+
+  <% if @user_listing.listing.word_cloud_image.attached? %>
+    <div class="card mt-2 mb-2">
+      <div class="card-header">
+        <h3>Word Cloud</h3>
+      </div>
+      <div class="card-body p-0">
+        <%= image_tag @user_listing.listing.word_cloud_image, class: "mx-auto d-block img-fluid" %>
+      </div>
+    </div>
+  <% end %>
 
   <% @user_listing.listing.reviews.each do |review| %>
-    <div class="card">
+    <div class="card mt-2 mb-2">
       <div class="card-body">
-        <strong><%= review.author %></strong>
+        <h4><%= review.author %></h4>
         <p><%= review.text %></p>
+        <span class="text-muted">Gathered at <%= review.created_at.strftime("%Y/%m/%d") %></span>
       </div>
     </div>
   <% end %>

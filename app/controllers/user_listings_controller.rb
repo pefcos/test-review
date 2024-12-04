@@ -5,13 +5,14 @@ class UserListingsController < ApplicationController
   # GET /listings or /listings.json
   def index
     @user_listing = UserListing.new
-    @user_listings = UserListing.all
+    @user_listings = current_user.user_listings.all
   end
 
   # GET /listings/1 or /listings/1.json
   def show
-    @chart_labels = %w[January February March April] # TODO: ADD CHART DATA
-    @chart_data = [10, 20, 30, 40] # TODO: ADD CHART DATA
+    grouped_data = @user_listing.listing.reviews.group_by { |r| r.created_at.strftime('%B %Y') }
+    @chart_labels = grouped_data.keys
+    @chart_values = grouped_data.values.map(&:count)
   end
 
   # POST /listings or /listings.json
@@ -33,7 +34,6 @@ class UserListingsController < ApplicationController
 
   # DELETE /listings/1 or /listings/1.json
   def destroy
-    @user_listing.listing.destroy! if @user_listing.listing.present? && @user_listing.listing.user_listings.count == 1
     @user_listing.destroy!
 
     respond_to do |format|

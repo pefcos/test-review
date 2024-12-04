@@ -1,4 +1,4 @@
-class ScraperJob
+class DailyScraperJob
   include Sidekiq::Job
 
   sidekiq_options retry: false

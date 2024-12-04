@@ -6,14 +6,22 @@ class Listing < ApplicationRecord
   validates :url, presence: true
   validates :url, format: { with: %r{\Ahttps://www\.airbnb\.com}, message: 'is not a valid Airbnb URL.' }
 
+  has_one_attached :word_cloud_image
+
   def review_word_cloud
-    all_frequencies = {}
+    fullreviews = ''
     reviews.each do |rev|
-      rev.count_word_frequencies.each do |w, c|
-        all_frequencies[w] = 0 unless all_frequencies.include? w
-        all_frequencies[w] += c
-      end
+      fullreviews += " #{rev.text}"
     end
-    all_frequencies.to_a
+
+    fullreviews = fullreviews.gsub(/[^(a-z|A-Z) ]/, '').downcase
+    # Decided to remove the uninteresting words. The line below can be commmented if you wish to include them.
+    fullreviews = fullreviews.gsub(/\b(i|the|a|an|and|this|that|was|is)\b/, ' ')
+
+    fullreviews = fullreviews.split(' ').each_with_object(Hash.new(0)) do |item, hash|
+      hash[item] += 1
+    end.to_a
+
+    (fullreviews.sort_by { |k, v| -v })[0..49]
   end
 end

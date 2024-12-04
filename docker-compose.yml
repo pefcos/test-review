@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+    depends_on:
+      - redis
+    command: bundle exec rails server -b 0.0.0.0
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+  selenium:
+    image: selenium/standalone-firefox
+    ports:
+      - "4444:4444"
+    environment:
+      - SE_OPTS=--headless

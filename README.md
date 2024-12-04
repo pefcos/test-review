@@ -1,24 +1,30 @@
-# README
+# test-review
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This readme explains how to run the code.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+Firstly, ensure you have docker installed. After that, clone the repository
 
-* System dependencies
+```bash
+git clone https://github.com/pefcos/test-review.git
+```
 
-* Configuration
+After cloning, `cd` into the repository and run
 
-* Database creation
+```bash
+docker-compose up
+```
 
-* Database initialization
+This command will initialize the web-server, but to start the sidekiq job execution process, you'll need to run in another terminal (while the server is still up)
 
-* How to run the test suite
+```bash
+docker-compose exec app bundle exec sidekiq
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+Now you can access the `localhost:3000` route in your browser and start using the application.
 
-* Deployment instructions
+### Troubleshooting
 
-* ...
+If you have any problem starting the sidekiq process, the redis port may already be used in your system. You need to stop the redis process (or whichever other process is using the port 6379).
+

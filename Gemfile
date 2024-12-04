@@ -35,7 +35,7 @@ gem 'tzinfo-data', platforms: %i[windows jruby]
 gem 'bootsnap', require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem 'image_processing', '~> 1.2'
 
 # Front-end
 gem 'bootstrap', '~> 5.3.3'
@@ -66,3 +66,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
 end
+
+gem 'chart-js-rails', '~> 0.1.7'
+
+gem 'magic_cloud', '~> 0.0.5'
