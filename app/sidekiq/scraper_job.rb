@@ -20,36 +20,51 @@ class ScraperJob
       li.name = title
       li.url = "https://www.airbnb.com/rooms/#{airbnb_listing_id}"
     end
-    sleep 4
-
-    # driver.execute_script("document.querySelector(\"button[data-testid='pdp-show-all-reviews-button']\").scrollIntoView(true)")
-    sleep 2
-    button = driver.find_element(css: "button[data-testid='pdp-show-all-reviews-button']")
-    # Get number of reviews, accounting for possible "," in the number. Used for review scrolling.
-    scrolls = button.attribute("innerHTML").match(/\d{1,3}(,\d{3})*/)[0].gsub(',', '').to_i / 10
-    sleep 2
-    driver.execute_script('arguments[0].click();', button)
-    sleep 2
-
-    # scrollable_panel = driver.find_element(:css, "div[role='dialog'] div[tabindex='0']").find_element(xpath: './..')
-    scrolls.times do |si|
-      driver.execute_script("document.querySelector(\"div[role='dialog'] div:has(div[tabindex='0'])\").scrollBy(0,5000);")
-
-      sleep 1
-    end
 
     existing_review_ids = listing.reviews.collect(&:airbnb_review_id)
 
-    reviews = driver.find_elements(css: "div[data-testid='pdp-reviews-modal-scrollable-panel'] div[data-review-id]")
-    reviews.each do |review|
-      review_id = review.attribute('data-review-id')
-      next if existing_review_ids.include?(review_id)
+    button = driver.find_elements(css: "button[data-testid='pdp-show-all-reviews-button']").first
+    if button.present?
+      # > 6 reviews, needs to click button to gather all
+      # Get number of reviews, accounting for possible "," in the number. Used for review scrolling.
+      scrolls = button.attribute("innerHTML").match(/\d{1,3}(,\d{3})*/)[0].gsub(',', '').to_i / 10
+      driver.execute_script('arguments[0].click();', button)
+      sleep 2
 
-      author = review.find_element(css: 'div section div div h2').text
-      # rating = review.find_element(css: 'div div div span').text.gsub(/\d/).first.to_i
-      review_text = review.find_element(css: 'div div div span span').text
+      # Scrolling to load reviews. Approx. 10 reviews are loaded every scroll.
+      scrolls.times do |si|
+        driver.execute_script("document.querySelector(\"div[role='dialog'] div:has(div[tabindex='0'])\").scrollBy(0,5000);")
 
-      listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
+        sleep 1
+      end
+
+      reviews = driver.find_elements(css: "div[data-testid='pdp-reviews-modal-scrollable-panel'] div[data-review-id]")
+      reviews.each do |review|
+        review_id = review.attribute('data-review-id')
+        next if existing_review_ids.include?(review_id)
+
+        author = review.find_element(css: 'div section div div h2').text
+        review_text = review.find_element(css: 'div div div span span').text
+
+        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
+      end
+    else
+      # <= 6 reviews, all reviews are already on page, no need for modal dialog.
+      # REVIEW: div[role='list'] div[role='listitem'] 
+      # AUTHOR: <REVIEW> div div div div div h3
+      # TEXT: div div div div span span
+      # DATE: div div div (innertext) - IN BETWEEN TWO div[aria-hidden='true']
+
+      reviews = driver.find_elements(css: "section div div div[role='list'] div[role='listitem']")
+      reviews.each do |review|
+        review_id = review.find_element(css: "div div div div div[id^='review']").attribute('id').match(/\d+/).to_s
+        next if existing_review_ids.include?(review_id)
+
+        author = review.find_element(css: 'div div div div div h3').attribute("innerHTML")
+        review_text = review.find_element(css: 'div div div div span span').attribute("innerHTML")
+
+        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
+      end
     end
 
     # Generate and save word cloud.
