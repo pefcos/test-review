@@ -70,3 +70,5 @@ end
 gem 'chart-js-rails', '~> 0.1.7'
 
 gem 'magic_cloud', '~> 0.0.5'
+
+gem "chronic", "~> 0.10.2"

@@ -44,9 +44,10 @@ class ScraperJob
         next if existing_review_ids.include?(review_id)
 
         author = review.find_element(css: 'div section div div h2').text
+        date = Chronic.parse(review.find_element(css: 'div div').text.split("\n")[5]).to_date # TODO: Check BETWEEN TWO div[aria-hidden='true']
         review_text = review.find_element(css: 'div div div span span').text
 
-        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
+        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: date
       end
     else
       # <= 6 reviews, all reviews are already on page, no need for modal dialog.
@@ -61,9 +62,10 @@ class ScraperJob
         next if existing_review_ids.include?(review_id)
 
         author = review.find_element(css: 'div div div div div h3').attribute("innerHTML")
+        date = Chronic.parse(review.find_element(css: "div div div.s78n3tv").attribute("innerHTML").match(/\d (week|day)s? ago/)).to_date # TODO: Check BETWEEN TWO div[aria-hidden='true']
         review_text = review.find_element(css: 'div div div div span span').attribute("innerHTML")
 
-        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: Date.today
+        listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: date
       end
     end
 
