@@ -2,12 +2,12 @@
   <div class="card-body">
     <%= form_with(model: user_listing) do |f| %>
       <% if user_listing.errors.any? %>
-        <div style="color: red">
+        <div class="row" style="color: red">
           <h2><%= pluralize(user_listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
 
           <ul>
             <% user_listing.errors.each do |error| %>
-              <li><%= error.full_message %></li>
+              <li class="ms-3"><%= error.full_message %></li>
             <% end %>
           </ul>
         </div>

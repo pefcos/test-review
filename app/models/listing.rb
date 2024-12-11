@@ -4,7 +4,6 @@ class Listing < ApplicationRecord
   has_many :users, through: :users_listings
 
   validates :url, presence: true
-  validates :url, format: { with: %r{\Ahttps://www\.airbnb\.com}, message: 'is not a valid Airbnb URL.' }
 
   has_one_attached :word_cloud_image
 

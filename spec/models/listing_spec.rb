@@ -2,34 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Listing, type: :model do
   let(:review1) do
-    Review.create(listing: listing, author: 'Author', text: '', date: Date.new(2024, 10, 2),
-                  airbnb_review_id: '1297970922053023032')
+    Review.create(listing: listing, author: 'Author', text: '', date: Date.new(2024, 10, 2), airbnb_review_id: '1297970922053023032')
   end
   let(:review2) do
-    Review.create(listing: listing, author: 'Author', text: '', date: Date.new(2024, 10, 2),
-                  airbnb_review_id: '1297970922053023032')
+    Review.create(listing: listing, author: 'Author', text: '', date: Date.new(2024, 10, 2), airbnb_review_id: '1297970922053023032')
   end
 
   context 'url' do
-    it 'should be valid when is airbnb' do
-      listing = Listing.new name: 'Listing', url: 'https://www.airbnb.com/h/roofdeckhottub', airbnb_id: '124314'
-
-      expect(listing).to be_valid
-    end
-
-    it 'should be valid when is airbnb with params' do
-      listing = Listing.new name: 'Listing', url: 'https://www.airbnb.com.br/rooms/52596108?_set_bev_on_new_domain=1732795680_EANWJlOGFkZjMyMj&source_impression_id=p3_1732903736_P3nB1KEwIkgbTeuS',
-                            airbnb_id: '52596108'
-
-      expect(listing).to be_valid
-    end
-
-    it 'should be invalid when is not airbnb' do
-      listing = Listing.new name: 'Listing', url: 'https://mail.google.com/mail/', airbnb_id: '1234141'
-
-      expect(listing).to_not be_valid
-    end
-
     it 'should be invalid when nil' do
       listing = Listing.new name: 'Listing', url: nil, airbnb_id: '1234141'
 
