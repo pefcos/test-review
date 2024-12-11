@@ -13,32 +13,12 @@
       <h3>Reviews Gathered by Month</h3>
     </div>
     <div class="card-body">
-      <div>
-        <canvas id="reviewChart"></canvas>
+      <div data-controller="chart" 
+           data-chart-labels-value="<%= @chart_labels.to_json %>" 
+           data-chart-data-value="<%= @chart_values.to_json %>">
+        <canvas data-chart-target="canvas" id="reviewChart"></canvas>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script>
-        const ctx = document.getElementById('reviewChart');
-
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: <%= @chart_labels.to_json.html_safe %>,
-            datasets: [{
-              label: "Reviews Gathered",
-              data: <%= @chart_values.to_json.html_safe %>,
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      </script>
     </div>
   </div>
 
