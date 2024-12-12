@@ -66,12 +66,15 @@ class ScraperService
   def scrape_page_reviews(listing)
     reviews = @driver.find_elements(css: "section div div div[role='list'] div[role='listitem']")
 
+    existing_review_ids = listing.reviews.collect(&:airbnb_review_id)
+
     reviews.each do |review|
       review_id = review.find_element(css: "div div div div div[id^='review']").attribute('id').match(/\d+/).to_s
       next if existing_review_ids.include?(review_id)
 
       author = review.find_element(css: 'div div div div div h3').attribute('innerHTML')
-      date = Chronic.parse(review.find_element(css: 'div div div.s78n3tv').attribute('innerHTML').match(/\d (week|day)s? ago/)).to_date # FIXME: Doesn't read actual dates!
+      date = Chronic.parse(ActionController::Base.helpers.strip_tags(review.find_element(css: 'div div div.s78n3tv')
+                    .attribute('innerHTML')).match(/·.+·/)).to_date
       review_text = review.find_element(css: 'div div div div span span').attribute('innerHTML')
 
       listing.reviews.create author: author, text: review_text, airbnb_review_id: review_id, date: date
