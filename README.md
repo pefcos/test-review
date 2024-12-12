@@ -15,6 +15,7 @@ git clone https://github.com/pefcos/test-review.git
 After cloning, `cd` into the repository and run the following commands:
 
 ```bash
+bin/rails credentials:edit
 docker compose build
 docker compose up -d
 docker exec -it test-review-app-1 rails db:create
