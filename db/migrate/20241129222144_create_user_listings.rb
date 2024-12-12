@@ -8,8 +8,5 @@ class CreateUserListings < ActiveRecord::Migration[7.2]
 
       t.timestamps
     end
-
-    add_index :user_listings, %i[user_id listing_id], unique: true
-    add_index :user_listings, %i[listing_id user_id], unique: true
   end
 end

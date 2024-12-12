@@ -2,15 +2,17 @@ class DailyScraperJob
   include Sidekiq::Job
 
   sidekiq_options retry: false
+  sidekiq_options queue: 'default'
 
   def perform
-    logger.info 'Started daily scraping'
+    options = Selenium::WebDriver::Firefox::Options.new
+    options.add_argument('--headless')
+    driver = Selenium::WebDriver.for(:firefox, options: options)
 
     Listings.all.each do |listing|
-      ScraperJob.perform_async(listing.url, nil)
+      ScraperService.new(listing.url, driver, listing.id).call
     end
 
-    # Save or process the extracted data
-    logger.info 'Daily scraping completed'
+    driver.quit
   end
 end

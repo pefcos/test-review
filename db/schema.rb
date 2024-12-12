@@ -67,9 +67,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_03_165537) do
     t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["listing_id", "user_id"], name: "index_user_listings_on_listing_id_and_user_id", unique: true
     t.index ["listing_id"], name: "index_user_listings_on_listing_id"
-    t.index ["user_id", "listing_id"], name: "index_user_listings_on_user_id_and_listing_id", unique: true
     t.index ["user_id"], name: "index_user_listings_on_user_id"
   end
 

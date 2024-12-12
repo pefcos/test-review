@@ -15,9 +15,10 @@ git clone https://github.com/pefcos/test-review.git
 After cloning, `cd` into the repository and run the following commands:
 
 ```bash
+docker compose build
 docker compose up -d
-docker sudo docker exec -it test-review-app-1 rails db:create
-docker sudo docker exec -it test-review-app-1 rails db:migrate
+docker exec -it test-review-app-1 rails db:create
+docker exec -it test-review-app-1 rails db:migrate
 docker exec -d -it test-review-app-1 bundle exec sidekiq
 ```
 
